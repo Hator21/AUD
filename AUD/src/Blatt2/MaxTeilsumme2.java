@@ -12,8 +12,9 @@ public class MaxTeilsumme2 {
 	public static void randomfolge(int n) {
 		int z = 0;
 		for (int j = 0; j < n; j++) {
-			// int randomNumber = (random.nextInt(60) - 31);
-			folge[j] = z;
+			int randomNumber = (random.nextInt(60) - 31);
+			//System.out.println(randomNumber);
+			folge[j] = randomNumber;
 			z++;
 		}
 	}
@@ -29,12 +30,13 @@ public class MaxTeilsumme2 {
 		for (int i = 0; i < n; i++) {
 			summe = 0;
 			// System.out.println("\n");
-			for (int j = 0; j < i; j++) {
+			for (int j = i; j < n; j++) {
 				summe += folge[j];
 				additionen += 1;
 				if (summe > maxsumme) {
 					maxsumme = summe;
-					bis = n-1;
+					von=i;
+					bis = j;
 				}
 			}
 		}
