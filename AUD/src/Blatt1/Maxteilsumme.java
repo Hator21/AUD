@@ -3,7 +3,7 @@ package Blatt1;
 import java.util.Random;
 
 public class Maxteilsumme {
-	private static int[]	folge	= new int[3001];
+	private static int[]	folge	= new int[3000];
 	private static int		n		= folge.length;
 	private static long		von, bis, additionen, maxsumme, summe;
 
