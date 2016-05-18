@@ -1,15 +1,11 @@
 package baum;
 
-import Praktikum4ADS.IBinaryTreeNode;
+public class BinaryTreeNode implements IBinaryTreeNode<Integer, Integer> {
+	private Integer			key;
+	private Integer			value;
+	private BinaryTreeNode	leftchild;
+	private BinaryTreeNode	rightchild;
 
-public class BinaryTreeNode implements Praktikum4ADS.IBinaryTreeNode<Integer, Integer>{
-	private Integer key;
-	private Integer value;
-	private BinaryTreeNode leftchild;
-	private BinaryTreeNode rightchild;
-	
-	
-	
 	@Override
 	public Integer getKey() {
 		return key;
@@ -33,13 +29,13 @@ public class BinaryTreeNode implements Praktikum4ADS.IBinaryTreeNode<Integer, In
 	@Override
 	public void setKey(Integer arg0) {
 		key = arg0;
-		
+
 	}
 
 	@Override
 	public void setValue(Integer arg0) {
 		value = arg0;
-		
+
 	}
 
 	@Override
@@ -50,7 +46,7 @@ public class BinaryTreeNode implements Praktikum4ADS.IBinaryTreeNode<Integer, In
 	@Override
 	public void setRightChild(IBinaryTreeNode arg0) {
 		rightchild = (BinaryTreeNode) arg0;
-		
+
 	}
 
 }
