@@ -42,78 +42,277 @@ public class RBTree implements IRBTree {
 	 */
 	@Override
 	public void insert(final int key) {
-		if ((this.search(key) != null) && (this.search(key) != this.root)) {
-			RBNode parent = this.search(key);
-			RBNode node = new RBNode();
-			NodeColor color = null;
-			RBNode nil = null;
-			String direction = "LEFT";//Wo kriege ich die richtung her ??? KALLE
+		if (this.root == null) {
+			this.root = new RBNode();
+			this.root.setKey(key);
+		}
+		RBNode node = this.root;
+		while (true) {
 
-			node.setColor(color.RED);
-			node.setLeft(nil);
-			node.setRight(nil);
-			node.setParent(parent);//ka ob richtig mit kalle reden
-			if (node.getParent() != null) {
-				if (direction.equals("LEFT")) {
-					parent.setLeft(node);
-				} else {
-					parent.setRight(node);
-				}
-			}
-			int x = 0;
-			while (x == 0) {
-				// Bedingung_1:
-				if (parent == null) {
-					node.setColor(color.BLACK);
-					this.root = node;
-					return;
-				}
-				// Bedingung_2:
-				if (parent.getColor().equals(color.BLACK)) {
-					return;
-				}
-				RBNode grandparent = node.getGrandeparent(node);
-				RBNode uncle = node.getUncle(node);
-				// Bedingung_3:
-				if (uncle.equals(null) && uncle.getColor().equals(color.RED)) {
-					parent.setColor(color.BLACK);
-					uncle.setColor(color.BLACK);
-					grandparent.setColor(color.RED);
-					node = grandparent;
-					node.setParent(node.getParent());
-					continue;
-				}
-				// Bedingung_4:
-				if ((node == parent.getRight()) && (parent == grandparent.getLeft())) {
-					//rotation links
-				} else if ((node == parent.getLeft()) && (parent == grandparent.getRight())) {
-					//rotation rechts
-				}
-				// Bedingung_5:
-				if ((node == parent.getLeft()) && (parent == grandparent.getLeft())) {
-					//rotation rechts
-
-				} else {
-					//rotation links
-				}
-				parent.setColor(color.BLACK);
-				grandparent.setColor(color.RED);
+			if (key == node.getKey()) {
+				node.setKey(key);
 				return;
+			} else if (key < node.getKey()) {
+				if (node.getLeft() == null) {
+					RBNode left = new RBNode();
+					left.setKey(key);
+					node.setLeft(left);
+					this.adjustAfterInsertion(node.getLeft());
+					break;
+				}
+				node = node.getLeft();
+			} else {
+				if (node.getRight() == null) {
+					RBNode right = new RBNode();
+					right.setKey(key);
+					node.setRight(right);
+					this.adjustAfterInsertion(node.getRight());
+					break;
+				}
+				node = node.getRight();
 			}
 		}
-
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final int key) {}
+	public void delete(final int key) {
+		RBNode deleteTarget = this.search(key);
+
+		if (deleteTarget == null) {
+			return;
+		}
+
+		if (deleteTarget.getKey() != key) {
+			return;
+		}
+		if ((deleteTarget.getLeft() != null) && (deleteTarget.getRight() != null)) {
+			RBNode maxOnTheLeft = this.findMax(deleteTarget.getLeft());
+			deleteTarget.setKey(maxOnTheLeft.getKey());
+
+		}
+
+		RBNode pullUp = deleteTarget.getLeft() == null ? deleteTarget.getRight() : deleteTarget.getLeft();
+		if (pullUp != null) {
+
+			if (deleteTarget == this.root) {
+				this.root = pullUp;
+			} else if (deleteTarget.getParent().getLeft() == deleteTarget) {
+				deleteTarget.getParent().setLeft(pullUp);
+			} else {
+				deleteTarget.getParent().setRight(pullUp);
+			}
+			if (deleteTarget.getColor() == NodeColor.BLACK) {
+				this.adjustAfterRemoval(pullUp);
+			}
+		} else if (deleteTarget == this.root) {
+			this.root = null;
+		} else {
+			if (deleteTarget.getColor() == NodeColor.BLACK) {
+				this.adjustAfterRemoval(deleteTarget);
+			}
+			if (deleteTarget.getParent().getLeft() == deleteTarget) {
+				deleteTarget.getParent().setLeft(null);
+			} else {
+				deleteTarget.getParent().setRight(null);
+			}
+		}
+	}
+
+	private RBNode findMax(final RBNode startNode) {
+		RBNode tmp = startNode;
+		RBNode prev = null;
+
+		while (tmp != null) {
+			prev = tmp;
+			tmp = tmp.getRight();
+		}
+
+		return prev;
+
+	}
+
+	private void adjustAfterRemoval(RBNode n) {
+		while ((n != this.root) && (n.getColor() == NodeColor.BLACK)) {
+			if (n == n.getParent().getLeft()) {
+				// Pulled up node is a left child
+				RBNode sibling = n.getParent().getRight();
+				if (sibling.getColor() == NodeColor.RED) {
+					sibling.setColor(NodeColor.BLACK);
+					n.getParent().setColor(NodeColor.RED);
+					this.rotateLeft(n.getParent());
+					sibling = n.getParent().getRight();
+				}
+				if ((sibling.getLeft().getColor() == NodeColor.BLACK) && (sibling.getRight().getColor() == NodeColor.BLACK)) {
+					sibling.setColor(NodeColor.RED);
+					n = n.getParent();
+				} else {
+					if (sibling.getRight().getColor() == NodeColor.BLACK) {
+						sibling.getLeft().setColor(NodeColor.BLACK);
+						sibling.setColor(NodeColor.RED);
+						this.rotateRight(sibling);
+						sibling = n.getParent().getRight();
+					}
+
+					sibling.setColor(sibling.getParent().getColor());
+					sibling.getParent().setColor(NodeColor.BLACK);
+					sibling.getRight().setColor(NodeColor.BLACK);
+					this.rotateLeft(n.getParent());
+					n = this.root;
+				}
+			} else {
+				// pulled up node is a right child
+				RBNode sibling = n.getParent().getLeft();
+				if (sibling.getColor() == NodeColor.RED) {
+					sibling.setColor(NodeColor.BLACK);
+					sibling.getParent().setColor(NodeColor.RED);
+					this.rotateRight(n.getParent());
+					sibling = n.getParent().getLeft();
+
+				}
+				if ((sibling.getLeft().getColor() == NodeColor.BLACK) && (sibling.getRight().getColor() == NodeColor.BLACK)) {
+					sibling.setColor(NodeColor.RED);
+					n = n.getParent();
+				} else {
+					if (sibling.getLeft().getColor() == NodeColor.BLACK) {
+						sibling.getRight().setColor(NodeColor.BLACK);
+						sibling.setColor(NodeColor.RED);
+						this.rotateLeft(sibling);
+						sibling = n.getParent().getLeft();
+					}
+					sibling.setColor(n.getParent().getColor());
+					n.getParent().setColor(NodeColor.BLACK);
+					sibling.getLeft().setColor(NodeColor.BLACK);
+					this.rotateRight(n.getParent());
+					n = this.root;
+				}
+			}
+		}
+		n.setColor(NodeColor.BLACK);
+	}
+
+	private void rotateLeft(final RBNode n) {
+		if (n.getRight() == null) {
+			return;
+		}
+		RBNode oldRight = n.getRight();
+		n.setRight(oldRight.getLeft());
+		if (n.getParent() == null) {
+			this.root = oldRight;
+		} else if (n.getParent().getLeft() == n) {
+			n.getParent().setLeft(oldRight);
+		} else {
+			n.getParent().setRight(oldRight);
+		}
+		oldRight.setLeft(n);
+	}
+
+	private void rotateRight(final RBNode n) {
+		if (n.getLeft() == null) {
+			return;
+		}
+		RBNode oldLeft = n.getLeft();
+		n.setLeft(oldLeft.getRight());
+		if (n.getParent() == null) {
+			this.root = oldLeft;
+		} else if (n.getParent().getLeft() == n) {
+			n.getParent().setLeft(oldLeft);
+		} else {
+			n.getParent().setRight(oldLeft);
+		}
+		oldLeft.setRight(n);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void modify(final int key, final int newKey) {}
+	public void modify(final int key, final int newKey) {
+		RBNode tmp;
 
+		tmp = this.search(key);
+		if (tmp == null) {
+			return;
+		}
+		if (tmp.getKey() != key) {
+			return;
+		}
+
+		this.delete(key);
+
+		this.insert(newKey);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void inOrder(final RBNode tmp) {
+		RBNode start = null;
+		if (tmp == null) {
+			start = this.root;
+		} else {
+			start = tmp;
+		}
+		if (start != null) {
+			this.inOrder(start.getLeft());
+
+			System.out.printf("%d ", start.getKey());
+			this.inOrder(start.getRight());
+		}
+	}
+
+	/**
+	 * Classic algorithm for fixing up a tree after inserting a node.
+	 */
+	private void adjustAfterInsertion(RBNode n) {
+		// Step 1: color the node red
+		n.setColor(NodeColor.RED);
+
+		// Step 2: Correct double red problems, if they exist
+		if ((n != null) && (n != this.root) && n.getColor().equals(NodeColor.RED)) {
+
+			// Step 2a (simplest): Recolor, and move up to see if more work
+			// needed
+			RBNode sibling = n.getParent().getRight();
+			if (sibling.getColor().equals(NodeColor.RED)) {
+				n.getParent().setColor(NodeColor.BLACK);
+				sibling.setColor(NodeColor.BLACK);
+				n.getGrandeparent(n).setColor(NodeColor.RED);
+				this.adjustAfterInsertion(n.getGrandeparent(n));
+			}
+
+			// Step 2b: Restructure for a parent who is the left child of the
+			// grandparent. This will require a single right rotation if n is
+			// also
+			// a left child, or a left-right rotation otherwise.
+			else if (n.getParent() == n.getGrandeparent(n).getLeft()) {
+				if (n == n.getParent().getRight()) {
+					this.rotateLeft(n = n.getParent());
+				}
+				n.getParent().setColor(NodeColor.BLACK);
+				n.getGrandeparent(n).setColor(NodeColor.RED);
+				this.rotateRight(n.getGrandeparent(n));
+			}
+
+			// Step 2c: Restructure for a parent who is the right child of the
+			// grandparent. This will require a single left rotation if n is
+			// also
+			// a right child, or a right-left rotation otherwise.
+			else if (n.getParent() == n.getGrandeparent(n).getRight()) {
+				if (n == n.getParent().getLeft()) {
+					this.rotateRight(n = n.getParent());
+				}
+				n.getParent().setColor(NodeColor.BLACK);
+				n.getGrandeparent(n).setColor(NodeColor.RED);
+				this.rotateLeft(n.getGrandeparent(n));
+			}
+
+		}
+
+		// Step 3: Color the root black
+		this.root.setColor(NodeColor.BLACK);
+	}
 }
