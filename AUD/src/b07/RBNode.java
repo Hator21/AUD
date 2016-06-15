@@ -99,8 +99,9 @@ public class RBNode implements IRBNode {
 	 * @param N
 	 * @return grantparent
 	 */
-	public RBNode getGrandeparent(RBNode N) {
-		return N.getParent().getParent();
+	public RBNode getGrandeparent() {
+		return (this.getParent() == null) ? null : this.getParent().getParent();
+
 	}
 
 	/**
@@ -110,10 +111,10 @@ public class RBNode implements IRBNode {
 	 * @return uncle
 	 */
 	public RBNode getUncle(RBNode N) {
-		if (N.getParent() == N.getGrandeparent(N).getLeft()) {
-			return N.getGrandeparent(N).getRight();
+		if (N.getParent() == N.getGrandeparent().getLeft()) {
+			return N.getGrandeparent().getRight();
 		} else {
-			return N.getGrandeparent(N).getLeft();
+			return N.getGrandeparent().getLeft();
 		}
 	}
 

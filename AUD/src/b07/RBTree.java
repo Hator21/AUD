@@ -56,6 +56,7 @@ public class RBTree implements IRBTree {
 				if (node.getLeft() == null) {
 					RBNode left = new RBNode();
 					left.setKey(key);
+					left.setParent(node);
 					node.setLeft(left);
 					this.adjustAfterInsertion(node.getLeft());
 					break;
@@ -65,6 +66,7 @@ public class RBTree implements IRBTree {
 				if (node.getRight() == null) {
 					RBNode right = new RBNode();
 					right.setKey(key);
+					right.setParent(node);
 					node.setRight(right);
 					this.adjustAfterInsertion(node.getRight());
 					break;
@@ -100,8 +102,10 @@ public class RBTree implements IRBTree {
 			if (deleteTarget == this.root) {
 				this.root = pullUp;
 			} else if (deleteTarget.getParent().getLeft() == deleteTarget) {
+				pullUp.setParent(deleteTarget.getParent());
 				deleteTarget.getParent().setLeft(pullUp);
 			} else {
+				pullUp.setParent(deleteTarget.getParent());
 				deleteTarget.getParent().setRight(pullUp);
 			}
 			if (deleteTarget.getColor() == NodeColor.BLACK) {
@@ -113,6 +117,7 @@ public class RBTree implements IRBTree {
 			if (deleteTarget.getColor() == NodeColor.BLACK) {
 				this.adjustAfterRemoval(deleteTarget);
 			}
+
 			if (deleteTarget.getParent().getLeft() == deleteTarget) {
 				deleteTarget.getParent().setLeft(null);
 			} else {
@@ -198,14 +203,20 @@ public class RBTree implements IRBTree {
 			return;
 		}
 		RBNode oldRight = n.getRight();
+		if (oldRight.getLeft() != null) {
+			oldRight.getLeft().setParent(n);
+		}
 		n.setRight(oldRight.getLeft());
 		if (n.getParent() == null) {
 			this.root = oldRight;
 		} else if (n.getParent().getLeft() == n) {
+			oldRight.setParent(n.getParent());
 			n.getParent().setLeft(oldRight);
 		} else {
+			oldRight.setParent(n.getParent());
 			n.getParent().setRight(oldRight);
 		}
+		n.setParent(oldRight);
 		oldRight.setLeft(n);
 	}
 
@@ -214,14 +225,20 @@ public class RBTree implements IRBTree {
 			return;
 		}
 		RBNode oldLeft = n.getLeft();
+		if (oldLeft.getRight() != null) {
+			oldLeft.getRight().setParent(n);
+		}
 		n.setLeft(oldLeft.getRight());
 		if (n.getParent() == null) {
 			this.root = oldLeft;
 		} else if (n.getParent().getLeft() == n) {
+			oldLeft.setParent(n.getParent());
 			n.getParent().setLeft(oldLeft);
 		} else {
+			oldLeft.setParent(n.getParent());
 			n.getParent().setRight(oldLeft);
 		}
+		n.setParent(oldLeft);
 		oldLeft.setRight(n);
 	}
 
@@ -248,7 +265,7 @@ public class RBTree implements IRBTree {
 	@Override
 	public void inOrder(final RBNode tmp) {
 		if (tmp != null) {
-
+			this.inOrder(tmp.getLeft());
 			System.out.printf("%d ", tmp.getKey());
 			this.inOrder(tmp.getRight());
 		}
@@ -277,35 +294,39 @@ public class RBTree implements IRBTree {
 			//RBNode sibling = n.getParent().getRight();
 			if ((n.siblingOf(n.getParent()) != null) && n.siblingOf(n.getParent()).getColor().equals(NodeColor.RED)) {
 				n.getParent().setColor(NodeColor.BLACK);
-				n.siblingOf(n).setColor(NodeColor.BLACK);
-				n.getGrandeparent(n).setColor(NodeColor.RED);
-				this.adjustAfterInsertion(n.getGrandeparent(n));
+				if ((n == null) || (n.getParent() == null)) {
+
+					n.siblingOf(n).setColor(NodeColor.BLACK);
+
+				}
+				n.getGrandeparent().setColor(NodeColor.RED);
+				this.adjustAfterInsertion(n.getGrandeparent());
 			}
 
 			// Step 2b: Restructure for a parent who is the left child of the
 			// grandparent. This will require a single right rotation if n is
 			// also
 			// a left child, or a left-right rotation otherwise.
-			else if ((n.getParent() != null) && (n.getParent() == n.getGrandeparent(n).getLeft())) {
+			else if ((n.getParent() != null) && (n.getGrandeparent() != null) && (n.getParent() == n.getGrandeparent().getLeft())) {
 				if (n == n.getParent().getRight()) {
 					this.rotateLeft(n = n.getParent());
 				}
 				n.getParent().setColor(NodeColor.BLACK);
-				n.getGrandeparent(n).setColor(NodeColor.RED);
-				this.rotateRight(n.getGrandeparent(n));
+				n.getGrandeparent().setColor(NodeColor.RED);
+				this.rotateRight(n.getGrandeparent());
 			}
 
 			// Step 2c: Restructure for a parent who is the right child of the
 			// grandparent. This will require a single left rotation if n is
 			// also
 			// a right child, or a right-left rotation otherwise.
-			else if ((n.getParent() != null) && (n.getParent() == n.getGrandeparent(n).getRight())) {
+			else if ((n.getParent() != null) && (n.getGrandeparent() != null) && (n.getParent() == n.getGrandeparent().getRight())) {
 				if (n == n.getParent().getLeft()) {
 					this.rotateRight(n = n.getParent());
 				}
 				n.getParent().setColor(NodeColor.BLACK);
-				n.getGrandeparent(n).setColor(NodeColor.RED);
-				this.rotateLeft(n.getGrandeparent(n));
+				n.getGrandeparent().setColor(NodeColor.RED);
+				this.rotateLeft(n.getGrandeparent());
 			}
 
 		}

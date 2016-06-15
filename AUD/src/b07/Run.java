@@ -7,14 +7,13 @@ public class Run {
 		tree.insert(1);
 		tree.insert(2);
 		tree.insert(16);
+		tree.insert(4);
 		tree.insert(21);
-		tree.insert(1);
-		tree.insert(2);
 		tree.inOrder();
 		System.out.println("\n____________________________________________________");
-		tree.delete(16);
+		tree.delete(2);
 		tree.inOrder();
-
+		System.out.println("\n____________________________________________________");
 	}
 
 }
