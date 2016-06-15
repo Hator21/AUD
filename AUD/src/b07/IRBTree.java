@@ -2,7 +2,7 @@ package b07;
 
 /**
  * Interface for the red/black tree.
- * 
+ *
  * @author karl
  *
  */
@@ -19,7 +19,7 @@ public interface IRBTree {
 
 	/**
 	 * Inserts a new node with a given key, if the tree does'nt contain it.
-	 * 
+	 *
 	 * @param key
 	 *            The key to be inserted
 	 */
@@ -27,7 +27,7 @@ public interface IRBTree {
 
 	/**
 	 * Deletes a node with the given key, if the tree does contain it.
-	 * 
+	 *
 	 * @param key
 	 *            The key to be deleted
 	 */
@@ -47,9 +47,14 @@ public interface IRBTree {
 
 	/**
 	 * Gives out the tree in order.
-	 * 
+	 *
 	 * @param tmp
 	 *            Should be null
 	 */
 	void inOrder(final RBNode tmp);
+
+	/**
+	 * Gives out the tree in order.
+	 */
+	void inOrder();
 }

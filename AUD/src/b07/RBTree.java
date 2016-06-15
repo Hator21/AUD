@@ -245,23 +245,21 @@ public class RBTree implements IRBTree {
 		this.insert(newKey);
 	}
 
+	@Override
+	public void inOrder(final RBNode tmp) {
+		if (tmp != null) {
+
+			System.out.printf("%d ", tmp.getKey());
+			this.inOrder(tmp.getRight());
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void inOrder(final RBNode tmp) {
-		RBNode start = null;
-		if (tmp == null) {
-			start = this.root;
-		} else {
-			start = tmp;
-		}
-		if (start != null) {
-			this.inOrder(start.getLeft());
-
-			System.out.printf("%d ", start.getKey());
-			this.inOrder(start.getRight());
-		}
+	public void inOrder() {
+		this.inOrder(this.root);
 	}
 
 	/**
@@ -276,10 +274,10 @@ public class RBTree implements IRBTree {
 
 			// Step 2a (simplest): Recolor, and move up to see if more work
 			// needed
-			RBNode sibling = n.getParent().getRight();
-			if (sibling.getColor().equals(NodeColor.RED)) {
+			//RBNode sibling = n.getParent().getRight();
+			if ((n.siblingOf(n.getParent()) != null) && n.siblingOf(n.getParent()).getColor().equals(NodeColor.RED)) {
 				n.getParent().setColor(NodeColor.BLACK);
-				sibling.setColor(NodeColor.BLACK);
+				n.siblingOf(n).setColor(NodeColor.BLACK);
 				n.getGrandeparent(n).setColor(NodeColor.RED);
 				this.adjustAfterInsertion(n.getGrandeparent(n));
 			}
@@ -288,7 +286,7 @@ public class RBTree implements IRBTree {
 			// grandparent. This will require a single right rotation if n is
 			// also
 			// a left child, or a left-right rotation otherwise.
-			else if (n.getParent() == n.getGrandeparent(n).getLeft()) {
+			else if ((n.getParent() != null) && (n.getParent() == n.getGrandeparent(n).getLeft())) {
 				if (n == n.getParent().getRight()) {
 					this.rotateLeft(n = n.getParent());
 				}
@@ -301,7 +299,7 @@ public class RBTree implements IRBTree {
 			// grandparent. This will require a single left rotation if n is
 			// also
 			// a right child, or a right-left rotation otherwise.
-			else if (n.getParent() == n.getGrandeparent(n).getRight()) {
+			else if ((n.getParent() != null) && (n.getParent() == n.getGrandeparent(n).getRight())) {
 				if (n == n.getParent().getLeft()) {
 					this.rotateRight(n = n.getParent());
 				}

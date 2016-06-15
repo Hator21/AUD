@@ -2,7 +2,7 @@ package b07;
 
 /**
  * Class for the red/black node.
- * 
+ *
  * @author karl
  *
  */
@@ -95,7 +95,7 @@ public class RBNode implements IRBNode {
 
 	/**
 	 * gets the grandparent oft the node.
-	 * 
+	 *
 	 * @param N
 	 * @return grantparent
 	 */
@@ -105,7 +105,7 @@ public class RBNode implements IRBNode {
 
 	/**
 	 * gets the uncle oft the node.
-	 * 
+	 *
 	 * @param N
 	 * @return uncle
 	 */
@@ -115,5 +115,9 @@ public class RBNode implements IRBNode {
 		} else {
 			return N.getGrandeparent(N).getLeft();
 		}
+	}
+
+	public RBNode siblingOf(RBNode n) {
+		return ((n == null) || (n.getParent() == null)) ? null : (n == n.getParent().getLeft()) ? n.getParent().getRight() : n.getParent().getLeft();
 	}
 }
