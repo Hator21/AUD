@@ -1,4 +1,5 @@
 package baum;
+
 public interface IBinaryTreeNode<TKey extends Comparable<TKey>, TValue> {
 	public TKey getKey();
 
@@ -15,4 +16,8 @@ public interface IBinaryTreeNode<TKey extends Comparable<TKey>, TValue> {
 	public IBinaryTreeNode getRightChild();
 
 	public void setRightChild(IBinaryTreeNode node);
+
+	public int getLevel();
+
+	public void setLevel(int level);
 }

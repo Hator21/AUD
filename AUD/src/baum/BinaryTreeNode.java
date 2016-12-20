@@ -5,6 +5,7 @@ public class BinaryTreeNode implements IBinaryTreeNode<Integer, Integer> {
 	private Integer			value;
 	private BinaryTreeNode	leftchild;
 	private BinaryTreeNode	rightchild;
+	private int				level;
 
 	@Override
 	public Integer getKey() {
@@ -47,6 +48,16 @@ public class BinaryTreeNode implements IBinaryTreeNode<Integer, Integer> {
 	public void setRightChild(IBinaryTreeNode arg0) {
 		rightchild = (BinaryTreeNode) arg0;
 
+	}
+
+	@Override
+	public int getLevel() {
+		return this.level;
+	}
+
+	@Override
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 }

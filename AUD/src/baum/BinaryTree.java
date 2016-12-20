@@ -3,11 +3,12 @@ package baum;
 import java.util.ArrayList;
 
 public class BinaryTree {
-	private BinaryTreeNode root;
+	private BinaryTreeNode	root;
 
 	public void insert(BinaryTreeNode node) {
 		BinaryTreeNode tmp;
 		BinaryTreeNode save;
+		int level = 0;
 
 		if (node == null)
 			return;
@@ -17,21 +18,26 @@ public class BinaryTree {
 
 		while (tmp != null) {
 			save = tmp;
-			if (node.getKey() < tmp.getKey())
+			if (node.getKey() < tmp.getKey()) {
 				tmp = (BinaryTreeNode) tmp.getLeftChild();
-			else if (node.getKey() > tmp.getKey())
-				tmp = (BinaryTreeNode) tmp.getRightChild();
-			else
-				return;
+				level++;
+			} else {
+				if (node.getKey() > tmp.getKey()) {
+					tmp = (BinaryTreeNode) tmp.getRightChild();
+					level++;
+				} else
+					return;
+			}
 		}
 
 		if (root == null)
 			root = node;
 		else if (node.getKey() < save.getKey())
 			save.setLeftChild(node);
+
 		else
 			save.setRightChild(node);
-
+		node.setLevel(level + 1);
 		return;
 
 	}
@@ -158,7 +164,6 @@ public class BinaryTree {
 	public ArrayList<BinaryTreeNode> inorder() {
 		ArrayList<BinaryTreeNode> l = new ArrayList<BinaryTreeNode>();
 
-		// Avoid implementing a non rekursive method
 		class in {
 			public void inorderRek(BinaryTreeNode x) {
 				if (x == null)

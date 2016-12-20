@@ -89,6 +89,7 @@ public class AVLTree<T extends Comparable<T>> extends BinaryTree {
 	}
 
 	private Node<T> rotateLeft(Node<T> node) {
+		System.out.println("rotateLeft");
 		Node<T> q = node;
 		Node<T> p = q.getRight();
 		Node<T> c = q.getLeft();
@@ -100,6 +101,7 @@ public class AVLTree<T extends Comparable<T>> extends BinaryTree {
 	}
 
 	private Node<T> rotateRight(Node<T> node) {
+		System.out.println("rotateRight");
 		Node<T> q = node;
 		Node<T> p = q.getLeft();
 		Node<T> c = q.getRight();
